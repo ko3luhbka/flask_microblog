@@ -4,4 +4,7 @@
 __pycache__
 logs
 *.log
-instance/   
+instance/
+htmlcov/
+.coverage
+*.egg-info
