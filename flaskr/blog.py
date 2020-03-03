@@ -25,10 +25,8 @@ def create():
         title = request.form['title']
         body = request.form['body']
         error = None
-
         if not title:
             error = 'Title is required.'
-
         if error is not None:
             flash(error)
         else:
@@ -40,7 +38,6 @@ def create():
             )
             db.commit()
             return redirect(url_for('blog.index'))
-
     return render_template('blog/create.html')
 
 
@@ -48,15 +45,12 @@ def create():
 @login_required
 def update(id):
     post = get_post(id)
-
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
         error = None
-
         if not title:
             error = 'Title is required.'
-
         if error is not None:
             flash(error)
         else:
@@ -68,7 +62,6 @@ def update(id):
             )
             db.commit()
             return redirect(url_for('blog.index'))
-
     return render_template('blog/update.html', post=post)
 
 
@@ -89,11 +82,8 @@ def get_post(id, check_author=True):
         ' WHERE p.id = ?',
         (id,)
     ).fetchone()
-
     if post is None:
         abort(404, "Post id {0} doesn't exist.".format(id))
-
     if check_author and post['author_id'] != g.user['id']:
         abort(403)
-
     return post

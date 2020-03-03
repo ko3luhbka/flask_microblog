@@ -23,7 +23,6 @@ def register():
         password = request.form['password']
         db = get_db()
         error = None
-
         if not username:
             error = 'Username is required!'
         elif not password:
@@ -33,7 +32,6 @@ def register():
             (username,)
         ).fetchone() is not None:
             error = 'User {} is already registered!'.format(username)
-
         if error is None:
             db.execute(
                 'INSERT INTO user (username, password) VALUES (?, ?)',
@@ -41,9 +39,7 @@ def register():
             )
             db.commit()
             return redirect(url_for('auth.login'))
-
         flash(error)
-
     return render_template('auth/register.html')
 
 
@@ -58,24 +54,19 @@ def login():
             'SELECT * FROM user WHERE username = ?',
             (username,)
         ).fetchone()
-
         if user is None or not check_password_hash(user['password'], password):
             error = 'Incorrect username or password!'
-
         if error is None:
             session.clear()
             session['user_id'] = user['id']
             return redirect(url_for('index'))
-
         flash(error)
-
     return render_template('auth/login.html')
 
 
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
-
     if user_id is None:
         g.user = None
     else:
@@ -83,6 +74,7 @@ def load_logged_in_user():
             'SELECT * FROM user WHERE id = ?',
             (user_id,)
         ).fetchone()
+
 
 @bp.route('/logout')
 def logout():
@@ -95,7 +87,5 @@ def login_required(view):
     def wrapped_view(**kwargs):
         if g.user is None:
             return redirect(url_for('auth.login'))
-
         return view(**kwargs)
-
     return wrapped_view
