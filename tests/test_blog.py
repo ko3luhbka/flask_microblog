@@ -16,6 +16,17 @@ def test_index(client, auth):
     assert b'href="/1/update"' in response.data
 
 
+def test_index_no_posts(app, client, auth):
+    with app.app_context():
+        db = get_db()
+        db.execute('DELETE FROM post')
+        db.commit()
+
+    response = client.get('/')
+    assert response.status_code == 200
+    assert b'There are no posts yet' in response.data
+
+
 @pytest.mark.parametrize(
     'path', (
     '/create',
