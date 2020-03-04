@@ -2,7 +2,11 @@ import os
 
 from flask import Flask
 
-from errors import page_not_found_error, forbidden_error, internal_server_error
+from flaskr.errors import (
+    page_not_found_error,
+    forbidden_error,
+    internal_server_error,
+)
 
 
 def create_app(test_config=None):
