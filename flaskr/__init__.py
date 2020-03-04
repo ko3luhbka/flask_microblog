@@ -2,9 +2,15 @@ import os
 
 from flask import Flask
 
+from errors import page_not_found_error, forbidden_error, internal_server_error
+
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
+    app.register_error_handler(403, forbidden_error)
+    app.register_error_handler(404, page_not_found_error)
+    app.register_error_handler(500, internal_server_error)
+
     app.config.from_mapping(
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'app.sqlite'),
