@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 import tempfile
 
@@ -5,10 +6,7 @@ import pytest
 
 from flaskr import create_app
 from flaskr.db import get_db, init_db
-
-
-with open(os.path.join(os.path.dirname(__file__), 'data.sql'), 'rb') as f:
-    _data_sql = f.read().decode('utf8')
+from flaskr.models import User, Post
 
 
 @pytest.fixture
@@ -18,11 +16,11 @@ def app():
     app = create_app({
         'TESTING': True,
         'DATABASE': db_path,
+        'SQLALCHEMY_DATABASE_URI': 'sqlite:///' + db_path,
+        'SQLALCHEMY_ECHO': False,
     })
 
-    with app.app_context():
-        init_db()
-        get_db().executescript(_data_sql)
+    db_insert_test_data(app)
 
     yield app
 
@@ -59,3 +57,25 @@ class AuthActions:
 @pytest.fixture
 def auth(client):
     return AuthActions(client)
+
+
+def db_insert_test_data(app):
+    with app.app_context():
+        init_db()
+        db = get_db()
+        test_user = User(
+            username='test',
+            password='pbkdf2:sha256:50000$TCI4GzcX$0de171a4f4dac32e3364c7ddc7c14f3e2fa61f2d17574483f7ffbb431b4acb2f'
+        )
+        other_user = User(
+            username='other',
+            password='pbkdf2:sha256:50000$kJPKsz6N$d2d4784f1b030a9761f5ccaeeaca413f27f2ecb76d6168407af962ddce849f79'
+        )
+        test_post = Post(
+            author_id=1,
+            created=datetime.fromisoformat('2020-01-01 00:00:00'),
+            title='test title',
+            body='test\nbody',
+        )
+        db.session.add_all((test_user, other_user, test_post))
+        db.session.commit()

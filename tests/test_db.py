@@ -1,6 +1,3 @@
-import sqlite3
-
-import pytest
 from flaskr.db import get_db
 
 
@@ -10,14 +7,9 @@ def test_get_close_db(app):
         db = get_db()
         assert db is get_db()
 
-    # The databese connection should be closed after the request is finished
-    with pytest.raises(sqlite3.ProgrammingError) as err:
-        db.execute('SELECT 1')
-
-    assert 'Cannot operate on a closed database' in str(err.value)
-
 
 def test_init_db_command(runner, monkeypatch):
+
     class Recorder(object):
         called = False
 
@@ -28,5 +20,3 @@ def test_init_db_command(runner, monkeypatch):
     result = runner.invoke(args=['init-db'])
     assert 'Database is initialized' in result.output
     assert Recorder.called
-
-

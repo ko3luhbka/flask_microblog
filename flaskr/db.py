@@ -3,31 +3,22 @@ import sqlite3
 import click
 from flask import current_app, g
 from flask.cli import with_appcontext
+from flask_sqlalchemy import SQLAlchemy
 
 
-def connect_db():
-    """Connect to the database"""
-    database = sqlite3.connect(
-        database=current_app.config['DATABASE'],
-        detect_types=sqlite3.PARSE_DECLTYPES
-    )
-    database.row_factory = sqlite3.Row
-    return database
+db = SQLAlchemy()
 
 
 def get_db():
     """Get database connection"""
     if 'db' not in g:
-        g.db = connect_db()
+        g.db = db
     return g.db
 
 
 def init_db():
     """Initialize database"""
-    db = get_db()
-    with current_app.open_resource('schema.sql') as f:
-        db.executescript(f.read().decode('utf-8'))
-
+    db.create_all()
 
 def close_db(error=None):
     """Close DB connection if exists"""
@@ -44,6 +35,6 @@ def init_db_command():
     click.echo('Database is initialized')
 
 
-def init_app(app):
-    app.teardown_appcontext(close_db)
-    app.cli.add_command(init_db_command)
+# def init_app(app):
+#     app.teardown_appcontext(close_db)
+#     app.cli.add_command(init_db_command)
