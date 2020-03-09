@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from flask_migrate import Migrate
 
 from flaskr.errors import (
     page_not_found_error,
@@ -37,6 +38,7 @@ def create_app(test_config=None):
     from .db import db, init_db_command
     from . import models
     db.init_app(app)
+    migrate = Migrate(app, db)
     from . import auth
     app.register_blueprint(auth.bp)
     from . import blog

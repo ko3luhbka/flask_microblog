@@ -22,6 +22,7 @@ def index():
     ).join(User).\
         filter(Post.author_id == User.id).\
         order_by(desc(Post.created)).all()
+
     return render_template('blog/index.html', posts=posts)
 
 

@@ -12,7 +12,7 @@ from flask import (
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 from flaskr.db import get_db
-from flaskr.models import User, Post
+from flaskr.models import User
 
 bp = Blueprint(name='auth', import_name=__name__, url_prefix='/auth')
 
@@ -22,7 +22,7 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        db = get_db()
+        db = get_db()   
         error = None
         if not username:
             error = 'Username is required!'

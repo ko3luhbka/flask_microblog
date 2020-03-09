@@ -1,7 +1,5 @@
-import sqlite3
-
 import click
-from flask import current_app, g
+from flask import g
 from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
 
@@ -33,8 +31,3 @@ def init_db_command():
     """Clear the existing database and create new tables"""
     init_db()
     click.echo('Database is initialized')
-
-
-# def init_app(app):
-#     app.teardown_appcontext(close_db)
-#     app.cli.add_command(init_db_command)
