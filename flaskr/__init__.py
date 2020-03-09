@@ -36,12 +36,13 @@ def create_app(test_config=None):
         pass
 
     from .db import db, init_db_command
-    from . import models
+    
     db.init_app(app)
     migrate = Migrate(app, db)
     from . import auth
     app.register_blueprint(auth.bp)
     from . import blog
+    from . import models
     app.register_blueprint(blog.bp)
     app.add_url_rule('/', endpoint='index')
     app.cli.add_command(init_db_command)

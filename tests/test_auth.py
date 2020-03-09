@@ -10,7 +10,7 @@ def test_register(client, app):
         '/auth/register',
         data={'username': 'a', 'password': 'a'}
     )
-    assert 'http://localhost/auth/login' == response.headers['Location']
+    assert response.headers['Location'] == 'http://localhost/auth/login'
 
     with app.app_context():
         assert User.query.filter_by(username='a').first() is not None
@@ -32,7 +32,7 @@ def test_register_validate_input(client, username, password, message):
 def test_login(client, auth):
     assert client.get('/auth/login').status_code == 200
     response = auth.login()
-    assert response.headers['Location'] == 'http://localhost/'
+    assert 'http://localhost/' == response.headers['Location']
 
     with client:
         client.get('/')
