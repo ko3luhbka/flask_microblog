@@ -1,8 +1,7 @@
-import os
-
 from flask import Flask
 from flask_migrate import Migrate
 
+from flaskr.config import Config
 from flaskr.errors import (
     page_not_found_error,
     forbidden_error,
@@ -11,32 +10,18 @@ from flaskr.errors import (
 
 
 def create_app(test_config=None):
-    app = Flask(__name__, instance_relative_config=True)
+    app = Flask(__name__)
     app.register_error_handler(403, forbidden_error)
     app.register_error_handler(404, page_not_found_error)
     app.register_error_handler(500, internal_server_error)
 
-    database_path = os.path.join(app.instance_path, 'app.db')
+    app.config.from_object(Config)
 
-    app.config.from_mapping(
-        SECRET_KEY='dev',
-        DATABASE=database_path,
-        SQLALCHEMY_DATABASE_URI='sqlite:///' + database_path,
-        SQLALCHEMY_TRACK_MODIFICATIONS=False,
-        SQLALCHEMY_ECHO=True,
-    )
-    if test_config is None:
-        app.config.from_pyfile('config.py', silent=True)
-    else:
+    if test_config is not None:
         app.config.from_mapping(test_config)
 
-    try:
-        os.makedirs(app.instance_path)
-    except OSError:
-        pass
-
     from .db import db, init_db_command
-    
+
     db.init_app(app)
     migrate = Migrate(app, db)
     from . import auth

@@ -14,10 +14,9 @@ def app():
     db_fd, db_path = tempfile.mkstemp()
 
     app = create_app({
+        'SECRET_KEY': 'test',
         'TESTING': True,
-        'DATABASE': db_path,
         'SQLALCHEMY_DATABASE_URI': 'sqlite:///' + db_path,
-        'SQLALCHEMY_ECHO': False,
     })
 
     db_insert_test_data(app)
