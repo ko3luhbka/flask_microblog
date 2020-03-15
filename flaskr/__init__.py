@@ -1,3 +1,7 @@
+import os
+import logging
+from logging.handlers import RotatingFileHandler
+
 from flask import Flask
 from flask_migrate import Migrate
 
@@ -31,4 +35,21 @@ def create_app(test_config=None):
     app.register_blueprint(blog.bp)
     app.add_url_rule('/', endpoint='index')
     app.cli.add_command(init_db_command)
+
+    if not app.debug:
+        if not os.path.exists('logs'):
+            os.mkdir('logs')
+        file_handler = RotatingFileHandler(
+            filename='logs/flaskr.log',
+            maxBytes=10240,
+            backupCount=10
+        )
+        file_handler.setFormatter(logging.Formatter(
+            '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
+        )
+        file_handler.setLevel(logging.INFO)
+        app.logger.addHandler(file_handler)
+
+        app.logger.setLevel(logging.INFO)
+        app.logger.info('Flaskr startup')
     return app
