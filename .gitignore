@@ -9,3 +9,4 @@ logs
 htmlcov/
 .coverage
 *.egg-info
+.vagrant
