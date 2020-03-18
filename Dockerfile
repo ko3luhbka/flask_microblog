@@ -6,7 +6,8 @@ WORKDIR /home/flaskr_user
 
 COPY requirements.txt requirements.txt
 # Workaround the error during PyMySQL dependency 'cryptography' installation
-RUN apk add --no-cache curl python3 pkgconfig python3-dev openssl-dev libffi-dev musl-dev make gcc
+RUN apk add --no-cache curl python3 pkgconfig python3-dev openssl-dev \
+libffi-dev musl-dev make gcc
 RUN pip install -r requirements.txt
 COPY flaskr flaskr
 COPY migrations migrations
