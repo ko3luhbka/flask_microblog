@@ -10,7 +10,7 @@ RUN apk add --no-cache curl python3 pkgconfig python3-dev openssl-dev libffi-dev
 RUN pip install -r requirements.txt
 COPY flaskr flaskr
 COPY migrations migrations
-COPY run.sh ./
+COPY run.sh config.py .env ./
 RUN chmod +x run.sh
 
 ENV FLASK_APP=flaskr

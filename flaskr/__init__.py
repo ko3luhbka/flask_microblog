@@ -5,7 +5,7 @@ from logging.handlers import RotatingFileHandler
 from flask import Flask
 from flask_migrate import Migrate
 
-from flaskr.config import Config
+from config import Config
 from flaskr.errors import (
     page_not_found_error,
     forbidden_error,
