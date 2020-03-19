@@ -9,6 +9,8 @@ services:
     environment:
       - SECRET_KEY
       - DATABASE_URL
+    volumes:
+      - mysql_db:/var/lib/mysql
 
   db:
     image: mysql/mysql-server:8.0.13
@@ -17,3 +19,9 @@ services:
       - MYSQL_DATABASE
       - MYSQL_USER
       - MYSQL_PASSWORD
+    volumes:
+      - mysql_db:/var/lib/mysql
+
+# See SO discussion for more details: https://stackoverflow.com/q/44284484
+volumes:
+  mysql_db:
