@@ -28,11 +28,13 @@ def create_app(test_config=None):
 
     db.init_app(app)
     migrate = Migrate(app, db)
-    from . import auth
+    from flaskr import auth
     app.register_blueprint(auth.bp)
-    from . import blog
-    from . import models
+    from flaskr import blog
+    from flaskr import models
     app.register_blueprint(blog.bp)
+    from flaskr.api import bp as api_bp
+    app.register_blueprint(api_bp, url_prefix='/api')
     app.add_url_rule('/', endpoint='index')
     app.cli.add_command(init_db_command)
 
