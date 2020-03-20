@@ -10,7 +10,6 @@ from flask import (
     session,
     url_for,
 )
-from werkzeug.security import check_password_hash, generate_password_hash
 from flaskr.db import get_db
 from flaskr.models import User
 
@@ -31,7 +30,8 @@ def register():
         elif User.query.filter_by(username=username).first() is not None:
             error = 'User {} is already registered!'.format(username)
         if error is None:
-            user = User(username=username, password_hash=generate_password_hash(password))
+            user = User(username=username)
+            user.set_password(password)
             db.session.add(user)
             db.session.commit()
             return redirect(url_for('auth.login'))
@@ -47,7 +47,7 @@ def login():
         password = request.form['password']
         error = None
         user = User.query.filter_by(username=username).first()
-        if user is None or not check_password_hash(user.password_hash, password):
+        if user is None or not user.check_password(password):
             error = 'Incorrect username or password!'
         if error is None:
             session.clear()
