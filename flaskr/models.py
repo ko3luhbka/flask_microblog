@@ -23,8 +23,9 @@ class User(db.Model):
         return check_password_hash(self.password_hash, password)
 
     def to_dict(self):
-        """Convert User object to dictionary."""
-
+        """
+        Convert User object to dictionary.
+        """
         user_dict = {
             'id': self.id,
             'username': self.username,
@@ -48,8 +49,9 @@ class User(db.Model):
 
     @staticmethod
     def to_collection_dict():
-        """Create a dictionary of User's dictionaries."""
-
+        """
+        Create a dictionary of User's dictionaries.
+        """
         users = [user.to_dict() for user in User.query.all()]
         users_collection = {
             'users': users,
@@ -69,8 +71,9 @@ class Post(db.Model):
         return '<Post id {}>'.format(self.id)
 
     def to_dict(self):
-        """Convert Post object to dictionary."""
-
+        """
+        Convert Post object to dictionary.
+        """
         post_dict = {
             'id': self.id,
             'author_id': self.author_id,
@@ -81,8 +84,9 @@ class Post(db.Model):
         return post_dict
 
     def from_dict(self, post_dict):
-        """Create User object from provided dictionary `user_dict`."""
-
+        """
+        Create User object from provided dictionary `user_dict`.
+        """
         for field in ('authod_id', 'created', 'title', 'body'):
             if field in post_dict:
                 setattr(self, field, post_dict[field])
