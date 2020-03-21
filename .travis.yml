@@ -3,5 +3,8 @@ python:
     - "3.8"
 
 script: 
-    - export PYTHONPATH=.
-    - pytest
+    - coverage run -m pytest
+
+after_success:
+    - pip install coveralls
+    - coveralls
