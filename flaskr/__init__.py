@@ -1,16 +1,12 @@
-import os
 import logging
+import os
 from logging.handlers import RotatingFileHandler
 
 from flask import Flask
 from flask_migrate import Migrate
 
 from config import Config
-from flaskr.errors import (
-    page_not_found_error,
-    forbidden_error,
-    internal_server_error,
-)
+from flaskr.errors import forbidden_error, internal_server_error, page_not_found_error
 
 
 def create_app(test_config=None):

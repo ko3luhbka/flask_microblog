@@ -6,6 +6,8 @@ from flaskr.db import db
 
 
 class User(db.Model):
+    """Represents blog user database table."""
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(120), unique=False, nullable=False)
@@ -14,7 +16,7 @@ class User(db.Model):
     posts = db.relationship('Post', backref='author', lazy=True)
 
     def __repr__(self):
-        return '<User {}>'.format(self.username)
+        return '<User {0}>'.format(self.username)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -23,15 +25,13 @@ class User(db.Model):
         return check_password_hash(self.password_hash, password)
 
     def to_dict(self):
-        """
-        Convert User object to dictionary.
-        """
+        """Convert User object to dictionary."""
         user_dict = {
             'id': self.id,
             'username': self.username,
             'first_name': self.first_name,
             'last_name': self.last_name,
-            'post_count': len(self.posts)
+            'post_count': len(self.posts),
         }
         return user_dict
 
@@ -39,6 +39,10 @@ class User(db.Model):
         """
         Create User object from provided dictionary `user_dict`.
         If `new_user` is True, set password as well.
+
+        :param dict user_dict: dictionary containing user attributes.
+        :param bool new_user: we don't have `password` field in `User`
+        class, but if we create a user, we should set a password.
         """
 
         for field in ('username', 'first_name', 'last_name'):
@@ -51,6 +55,8 @@ class User(db.Model):
     def to_collection_dict():
         """
         Create a dictionary of User's dictionaries.
+
+        :return: a dictionary with `User` class attributes.
         """
         users = [user.to_dict() for user in User.query.all()]
         users_collection = {
@@ -61,6 +67,8 @@ class User(db.Model):
 
 
 class Post(db.Model):
+    """Represents user's blog posts database table."""
+
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -68,11 +76,13 @@ class Post(db.Model):
     body = db.Column(db.Text, nullable=False)
 
     def __repr__(self):
-        return '<Post id {}>'.format(self.id)
+        return '<Post id {0}>'.format(self.id)
 
     def to_dict(self):
         """
         Convert Post object to dictionary.
+
+        :return: a dictionary with `Post` class attributes.
         """
         post_dict = {
             'id': self.id,
@@ -86,6 +96,8 @@ class Post(db.Model):
     def from_dict(self, post_dict):
         """
         Create User object from provided dictionary `user_dict`.
+
+        :param dict post_dict: a dictionary of `Post` class attributes.
         """
         for field in ('authod_id', 'created', 'title', 'body'):
             if field in post_dict:

@@ -10,6 +10,7 @@ from flask import (
     session,
     url_for,
 )
+
 from flaskr.db import get_db
 from flaskr.models import User
 
@@ -18,6 +19,7 @@ bp = Blueprint(name='auth', import_name=__name__, url_prefix='/auth')
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
+    """Create a new blog user."""
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -28,7 +30,7 @@ def register():
         elif not password:
             error = 'Password is required!'
         elif User.query.filter_by(username=username).first() is not None:
-            error = 'User {} is already registered!'.format(username)
+            error = 'User {0} is already registered!'.format(username)
         if error is None:
             user = User(username=username)
             user.set_password(password)
@@ -42,6 +44,7 @@ def register():
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
+    """Login user and redirect to main page."""
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -59,6 +62,7 @@ def login():
 
 @bp.before_app_request
 def load_logged_in_user():
+    """Check if user is logged in, and if so, add the user to Flask `g` object."""
     user_id = session.get('user_id')
     if user_id is None:
         g.user = None
@@ -68,11 +72,13 @@ def load_logged_in_user():
 
 @bp.route('/logout')
 def logout():
+    """Logout user and redirect to main page."""
     session.clear()
     return redirect(url_for('index'))
 
 
 def login_required(view):
+    """A decoratior used to check if user is logged in."""
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:

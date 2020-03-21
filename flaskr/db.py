@@ -3,13 +3,14 @@ from flask import g
 from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
 
-
 db = SQLAlchemy()
 
 
 def get_db():
     """
     Get database connection.
+
+    :return: a database object stored in Flask's `g`.
     """
     if 'db' not in g:
         g.db = db
@@ -17,17 +18,13 @@ def get_db():
 
 
 def init_db():
-    """
-    Initialize database.
-    """
+    """Initialize database."""
     db.create_all()
 
 
 @click.command('init-db')
 @with_appcontext
 def init_db_command():
-    """
-    Clear the existing database and create new tables.
-    """
+    """Clear the existing database and create new tables."""
     init_db()
     click.echo('Database is initialized')

@@ -1,12 +1,12 @@
-from datetime import datetime
 import os
 import tempfile
+from datetime import datetime
 
 import pytest
 
 from flaskr import create_app
 from flaskr.db import get_db, init_db
-from flaskr.models import User, Post
+from flaskr.models import Post, User
 
 
 @pytest.fixture

@@ -1,5 +1,5 @@
-from flask import g, session
 import pytest
+from flask import g, session
 
 from flaskr.models import User
 
