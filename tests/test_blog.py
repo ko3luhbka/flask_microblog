@@ -69,12 +69,14 @@ def test_exists_required(client, auth, path):
 
 
 def test_create(client, auth, app):
+    with app.app_context():
+        init_post_count = Post.query.count()
     auth.login()
     assert client.get('/create').status_code == 200
     client.post('/create', data={'title': 'created', 'body': ''})
 
     with app.app_context():
-        assert Post.query.count() == 2
+        assert Post.query.count() == init_post_count + 1
 
 
 def test_update(client, auth, app):
