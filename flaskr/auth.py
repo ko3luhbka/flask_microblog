@@ -54,7 +54,7 @@ def login():
             error = 'Incorrect username or password!'
         if error is None:
             session.clear()
-            session['user_id'] = user.id
+            session['user_id'] = user.id_
             return redirect(url_for('index'))
         flash(error)
     return render_template('auth/login.html')

@@ -8,7 +8,7 @@ from flaskr.db import db
 class User(db.Model):
     """Represents blog user database table."""
 
-    id = db.Column(db.Integer, primary_key=True)
+    id_ = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(120), unique=False, nullable=False)
     first_name = db.Column(db.String(80), unique=False, nullable=False, default='')
@@ -25,9 +25,9 @@ class User(db.Model):
         return check_password_hash(self.password_hash, password)
 
     def to_dict(self):
-        """Convert User object to dictionary."""
+        """Convert `User` object to dictionary."""
         user_dict = {
-            'id': self.id,
+            'id': self.id_,
             'username': self.username,
             'first_name': self.first_name,
             'last_name': self.last_name,
@@ -37,7 +37,7 @@ class User(db.Model):
 
     def from_dict(self, user_dict, new_user=False):
         """
-        Create User object from provided dictionary `user_dict`.
+        Create `User` object from provided dictionary `user_dict`.
         If `new_user` is True, set password as well.
 
         :param dict user_dict: dictionary containing user attributes.
@@ -69,23 +69,23 @@ class User(db.Model):
 class Post(db.Model):
     """Represents user's blog posts database table."""
 
-    id = db.Column(db.Integer, primary_key=True)
-    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    id_ = db.Column(db.Integer, primary_key=True)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id_'), nullable=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     title = db.Column(db.String(80), nullable=False)
     body = db.Column(db.Text, nullable=False)
 
     def __repr__(self):
-        return '<Post id {0}>'.format(self.id)
+        return '<Post id {0}>'.format(self.id_)
 
     def to_dict(self):
         """
-        Convert Post object to dictionary.
+        Convert `Post` object into dictionary.
 
         :return: a dictionary with `Post` class attributes.
         """
         post_dict = {
-            'id': self.id,
+            'id': self.id_,
             'author_id': self.author_id,
             'created': self.created,
             'title': self.title,
@@ -95,7 +95,7 @@ class Post(db.Model):
 
     def from_dict(self, post_dict):
         """
-        Create User object from provided dictionary `user_dict`.
+        Create `User` object from provided dictionary `user_dict`.
 
         :param dict post_dict: a dictionary of `Post` class attributes.
         """

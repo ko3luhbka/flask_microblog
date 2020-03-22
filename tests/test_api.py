@@ -89,7 +89,7 @@ def test_create_user_bad_fields(app, client, user_data):
 @pytest.mark.parametrize('user_id, user_data, status_code, err_msg', (
     (1,
     {
-        'id': 666,
+        'id_': 666,
         'first_name': 'NewUser2FirstName',
         'username': 'other',
     },
@@ -97,7 +97,7 @@ def test_create_user_bad_fields(app, client, user_data):
     'Please use a different username'),
     (1,
     {
-        'id': 666,
+        'id_': 666,
         'first_name': 'ChangedFirstName',
         'last_name': 'ChangedLastName',
         'password': 'changed_pass',
@@ -107,7 +107,7 @@ def test_create_user_bad_fields(app, client, user_data):
     None),
     (1,
     {
-        'id': 1,
+        'id_': 1,
         'first_name': 'ChangedFirstName2',
         'last_name': 'ChangedLastName2',
         'password': 'changed_pass2',
@@ -126,7 +126,7 @@ def test_update_user(app, client, user_id, user_data, status_code, err_msg):
     with app.app_context():
         db_user = User.query.get(user_id)
         for key, value in user_data.items():
-            if key in ('id', 'password'):
+            if key in ('id_', 'password'):
                 continue
             assert response_data[key] == value
             assert getattr(db_user, key) == value

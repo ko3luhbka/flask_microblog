@@ -14,14 +14,14 @@ def index():
     """Show main app page."""
     db = get_db()
     posts = db.session.query(
-        Post.id,
+        Post.id_,
         Post.title,
         Post.body,
         Post.created,
         Post.author_id,
         User.username
     ).join(User).\
-        filter(Post.author_id == User.id).\
+        filter(Post.author_id == User.id_).\
         order_by(desc(Post.created)).all()
 
     return render_template('blog/index.html', posts=posts)
@@ -41,22 +41,22 @@ def create():
             flash(error)
         else:
             db = get_db()
-            post = Post(title=title, body=body, author_id=g.user.id)
+            post = Post(title=title, body=body, author_id=g.user.id_)
             db.session.add(post)
             db.session.commit()
             return redirect(url_for('blog.index'))
     return render_template('blog/create.html')
 
 
-@bp.route('/<int:id>/update', methods=('GET', 'POST'))
+@bp.route('/<int:id_>/update', methods=('GET', 'POST'))
 @login_required
-def update(id):
+def update(id_):
     """
-    Update `Post` with id = `id` and once it's done redirect to main page.
+    Update `Post` with id = `id_` and once it's done redirect to main page.
 
-    :param int id: a post ID to be deleted, database primary key.
+    :param int id_: a post ID to be deleted, database primary key.
     """
-    post = get_post(id)
+    post = get_post(id_)
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
@@ -75,32 +75,32 @@ def update(id):
     return render_template('blog/update.html', post=post)
 
 
-@bp.route('/<int:id>/delete', methods=('POST',))
+@bp.route('/<int:id_>/delete', methods=('POST',))
 @login_required
-def delete(id):
+def delete(id_):
     """
-    Delete `Post` with id = `id` and redirect to main page.
+    Delete `Post` with id = `id_` and redirect to main page.
 
-    :param int id: a post ID to be deleted, database primary key.
+    :param int id_: a post ID to be deleted, database primary key.
     """
     db = get_db()
-    post = get_post(id)
+    post = get_post(id_)
     db.session.delete(post)
     db.session.commit()
     return redirect(url_for('blog.index'))
 
 
-def get_post(id, check_author=True):
-    """Get `Post` with id = `id` and raise error:
+def get_post(id_, check_author=True):
+    """Get `Post` with id = `id_` and raise error:
        - 404 if such a post doesn't exist;
-       - 403 if current_user's `id` doesn't match post's `id`
+       - 403 if current_user's `id_` doesn't match post's `id_`
 
     :param boot check_author: check that current user is an author of the post.
     :return: `Post` object.
     """
-    post = Post.query.get(id)
+    post = Post.query.get(id_)
     if post is None:
-        abort(404, "Post id {0} doesn't exist.".format(id))
-    if check_author and post.author_id != g.user.id:
+        abort(404, "Post id {0} doesn't exist.".format(id_))
+    if check_author and post.author_id != g.user.id_:
         abort(403)
     return post

@@ -6,16 +6,16 @@ from flaskr.db import db
 from flaskr.models import User
 
 
-@bp.route('/users/<int:id>', methods=['GET'])
-def get_user(id):
+@bp.route('/users/<int:id_>', methods=['GET'])
+def get_user(id_):
     """
-    Get User object with id = `id`.
+    Get User object with id = `id_`.
 
-    :param int id: a user ID from the database, actually a primary key.
-    :return: Flask `Request` object with added JSON representation of `User` and
+    :param int id_: a user ID from the database, actually a primary key.
+    :return: Flask `Response` object with added JSON representation of `User` and
     `Content-Type: application/json` HTTP header.
     """
-    return jsonify(User.query.get_or_404(id).to_dict())
+    return jsonify(User.query.get_or_404(id_).to_dict())
 
 
 @bp.route('/users', methods=['GET'])
@@ -23,7 +23,7 @@ def get_users():
     """
     Get all users available in database.
 
-    :return: Flask `Request` object with added JSON representation of all `User`
+    :return: Flask `Response` object with added JSON representation of all `User`
     objects available and `Content-Type: application/json` HTTP header.
     """
     return jsonify(User.to_collection_dict())
@@ -34,7 +34,7 @@ def create_user():
     """
     Create a new user if not exists.
 
-    :return: Flask `Request` object with added JSON representation of `User` and
+    :return: Flask `Response` object with added JSON representation of `User` and
     `Content-Type: application/json` HTTP header.
     """
     user_data = request.get_json() or {}
@@ -48,20 +48,20 @@ def create_user():
     db.session.commit()
     response = jsonify(user.to_dict())
     response.status_code = 201
-    response.headers['Location'] = url_for('api.get_user', id=user.id)
+    response.headers['Location'] = url_for('api.get_user', id_=user.id_)
     return response
 
 
-@bp.route('/users/<int:id>', methods=['PUT'])
-def update_user(id):
+@bp.route('/users/<int:id_>', methods=['PUT'])
+def update_user(id_):
     """
     Update users's attributes.
 
-    :param int id: a user ID from the database, actually a primary key.
-    :return: Flask `Request` object with added JSON representation of `User` and
+    :param int id_: a user ID from the database, actually a primary key.
+    :return: Flask `Response` object with added JSON representation of `User` and
     `Content-Type: application/json` HTTP header.
     """
-    user = User.query.get_or_404(id)
+    user = User.query.get_or_404(id_)
     user_data = request.get_json() or {}
     # We should check that new username doesn't collide with existing users
     if user_data.get('username') != user.username and \
