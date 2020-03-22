@@ -37,7 +37,7 @@ class User(db.Model):
 
     def from_dict(self, user_dict, new_user=False):
         """
-        Create `User` object from provided dictionary `user_dict`.
+        Populate `User` object with values from dictionary `user_dict`.
         If `new_user` is True, set password as well.
 
         :param dict user_dict: dictionary containing user attributes.
@@ -82,20 +82,43 @@ class Post(db.Model):
         """
         Convert `Post` object into dictionary.
 
-        :return: a dictionary with `Post` class attributes.
+        :return: a dictionary with `Post` class attributes as dictionary and some
+        `User` fields under `author` key.
         """
+        author = db.session.query(
+            User.username,
+            User.first_name,
+            User.last_name,
+        ).filter(self.author_id == User.id_).first()
+
         post_dict = {
             'id': self.id_,
             'author_id': self.author_id,
-            'created': self.created,
+            'author': dict(zip(('username', 'first_name', 'last_name'), author)),
+            'created': str(self.created),
             'title': self.title,
             'body': self.body,
         }
         return post_dict
 
+    @staticmethod
+    def to_collection_dict():
+        """
+        Create a dictionary of Post's dictionaries.
+
+        :return: a dictionary with `Post` class attributes as dictionary.
+        """
+        posts = [post.to_dict() for post in Post.query.all()]
+        posts_collection = {
+            'posts': posts,
+            'count': len(posts),
+        }
+        return posts_collection
+
+
     def from_dict(self, post_dict):
         """
-        Create `User` object from provided dictionary `user_dict`.
+        Populate `Post` object with values from dictionary `post_dict`.
 
         :param dict post_dict: a dictionary of `Post` class attributes.
         """

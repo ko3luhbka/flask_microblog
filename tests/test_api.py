@@ -1,13 +1,13 @@
 import pytest
 
-from flaskr.models import User
+from flaskr.models import Post, User
 
 
 @pytest.mark.parametrize('user_id', ('1', '666', ''))
 def test_get_user(app, client, user_id):
     with app.app_context():
         user = User.query.get(user_id)
-        response = client.get('/api/users/{}'.format(user_id))
+        response = client.get('/api/users/{0}'.format(user_id))
         if user is not None:
             assert response.status_code == 200
             json_data = response.get_json()
@@ -35,7 +35,7 @@ def test_get_users(app, client):
     },
     {
         'username': 'new_user2',
-        'password': 'pass2'
+        'password': 'pass2',
     },
 ))
 def test_create_user_successful(app, client, user_data):
@@ -117,7 +117,7 @@ def test_create_user_bad_fields(app, client, user_data):
     None),
 ))
 def test_update_user(app, client, user_id, user_data, status_code, err_msg):
-    response = client.put('/api/users/{}'.format(user_id), json=user_data)
+    response = client.put('/api/users/{0}'.format(user_id), json=user_data)
     assert response.status_code == status_code
     response_data = response.get_json()
     assert response_data.get('message') == err_msg
@@ -130,3 +130,31 @@ def test_update_user(app, client, user_id, user_data, status_code, err_msg):
                 continue
             assert response_data[key] == value
             assert getattr(db_user, key) == value
+
+
+@pytest.mark.parametrize('post_id', ('1', '666', ''))
+def test_get_post(app, client, post_id):
+    with app.app_context():
+        post = Post.query.get(post_id)
+        response = client.get('/api/posts/{0}'.format(post_id))
+        if post is not None:
+            assert response.status_code == 200
+            json_data = response.get_json()
+            assert json_data == post.to_dict()
+        else:
+            assert response.status_code == 404
+
+
+def test_get_posts(app, client):
+    with app.app_context():
+        users_posts = Post.query.join(User).filter(Post.author_id == User.id_).all()
+        response = client.get('/api/posts')
+        assert response.status_code == 200
+        json_data = response.get_json()
+        for db_post in users_posts:
+            db_post = db_post.to_dict()
+            for json_post in json_data['posts']:
+                if db_post['id'] != json_post['id']:
+                    continue
+                assert db_post == json_post
+        assert json_data['count'] == len(users_posts)
