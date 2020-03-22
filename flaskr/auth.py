@@ -23,6 +23,8 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        first_name = request.form.get('first_name', '')
+        last_name = request.form.get('last_name', '')
         db = get_db()
         error = None
         if not username:
@@ -32,7 +34,7 @@ def register():
         elif User.query.filter_by(username=username).first() is not None:
             error = 'User {0} is already registered!'.format(username)
         if error is None:
-            user = User(username=username)
+            user = User(username=username, first_name=first_name, last_name=last_name)
             user.set_password(password)
             db.session.add(user)
             db.session.commit()
