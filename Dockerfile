@@ -11,7 +11,7 @@ libffi-dev musl-dev make gcc
 RUN pip install -r requirements.txt
 COPY flaskr flaskr
 COPY migrations migrations
-COPY run.sh config.py .env ./
+COPY run.sh config.py ./
 RUN chmod +x run.sh
 
 ENV FLASK_APP=flaskr

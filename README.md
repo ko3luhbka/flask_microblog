@@ -41,20 +41,20 @@ run command `docker-compose down`.
 ##### Data params
 `None`
 ##### Success response
-  Code: 200 OK
-  Content:
+Code: 200 OK  
+Content:
 ```json
-    {
-        "id": 1,
-        "first_name": "John",
-        "last_name": "Doe",
-        "post_count": 1,
-        "username": "johndoe"
-    }
+{
+    "id": 1,
+    "first_name": "John",
+    "last_name": "Doe",
+    "post_count": 1,
+    "username": "johndoe"
+}
 ```
 ##### Error response
-  Code: 404 Not Found
-  Content: `None`
+Code: 404 Not Found  
+Content: `None`
 
 ### Get all blog users
 ##### URL
@@ -66,24 +66,24 @@ run command `docker-compose down`.
 ##### Data params
 `None`
 ##### Success response
-  Code: 200
-  Content:
+Code: 200  
+Content:
 ```json
-    {
-        "count": 1,
-        "users": [
-            {
-                "id": 1,
-                "first_name": "John",
-                "last_name": "Doe",
-                "post_count": 1,
-                "username": "johndoe"
-            }
-        ]
-    }
+{
+    "count": 1,
+    "users": [
+        {
+            "id": 1,
+            "first_name": "John",
+            "last_name": "Doe",
+            "post_count": 1,
+            "username": "johndoe"
+        }
+    ]
+}
 ```
 ##### Error response
-  `None`
+`None`
 
 ### Create new blog user
 ##### URL
@@ -95,33 +95,33 @@ run command `docker-compose down`.
 ##### Data params
 JSON:
 ```json
-   {
-    "first_name": "Jane",
-    "last_name": "Smith",
-    "password": supersecret,
-    "username": "janesmith"
-    }
+{
+"first_name": "Jane",
+"last_name": "Smith",
+"password": supersecret,
+"username": "janesmith"
+}
 ```
 ##### Success response
-  Code: 201
-  Content:
+Code: 201  
+Content:
 ```json
-    {
-        "id": 2,
-        "first_name": "Jane",
-        "last_name": "Smith",
-        "post_count": 0,
-        "username": "janesmith"
-    }
+{
+    "id": 2,
+    "first_name": "Jane",
+    "last_name": "Smith",
+    "post_count": 0,
+    "username": "janesmith"
+}
 ```
 ##### Error response
-  Code: 400 Bad request
-  Content: 
+Code: 400 Bad request  
+Content: 
 ```json
-  {
-    "error": "Bad Request",
-    "message": "The user is already exist, please use a different username"
-  }
+{
+"error": "Bad Request",
+"message": "The user is already exist, please use a different username"
+}
 ```
 
 ### Modify existing blog user
@@ -134,34 +134,34 @@ JSON:
 ##### Data params
 JSON:
 ```json
-   {
-    "first_name": "Lorem",
-    "last_name": "Ipsum",
-    "username": "loremipsum"
-    }
+{
+"first_name": "Lorem",
+"last_name": "Ipsum",
+"username": "loremipsum"
+}
 ```
 ##### Success response
-  Code: 200
-  Content:
+Code: 200
+Content:
 ```json
-    {
-        "id": 2,
-        "first_name": "Lorem",
-        "last_name": "Ipsum",
-        "username": "loremipsum",
-        "post_count": 0,
-    }
+{
+    "id": 2,
+    "first_name": "Lorem",
+    "last_name": "Ipsum",
+    "username": "loremipsum",
+    "post_count": 0,
+}
 ```
 ##### Error response
-  Code: 404 Not Found
-  Content: `None`
-  Code: 400 Bad request
-  Content: 
+Code: 404 Not Found  
+Content: `None`
+Code: 400 Bad request  
+Content: 
 ```json
-  {
-    "error": "Bad Request",
-    "message": "Please use a different username"
-  }
+{
+"error": "Bad Request",
+"message": "Please use a different username"
+}
 ```
 
 ### Get blog post
@@ -174,25 +174,25 @@ JSON:
 ##### Data params
 `None`
 ##### Success response
-  Code: 200 OK
-  Content:
+Code: 200 OK  
+Content:
 ```json
-    {
-    "author": {
-        "first_name": "John",
-        "last_name": "Doe",
-        "username": "johndoe"
-    },
-    "author_id": 1,
-    "body": "Hello world!",
-    "created": "2020-03-23 11:46:10",
-    "id": 1,
-    "title": "hello"
+{
+"author": {
+    "first_name": "John",
+    "last_name": "Doe",
+    "username": "johndoe"
+},
+"author_id": 1,
+"body": "Hello world!",
+"created": "2020-03-23 11:46:10",
+"id": 1,
+"title": "hello"
 }
 ```
 ##### Error response
-  Code: 404 Not Found
-  Content: `None`
+Code: 404 Not Found  
+Content: `None`
 
 ### Get all users blog posts
 ##### URL
@@ -204,28 +204,28 @@ JSON:
 ##### Data params
 `None`
 ##### Success response
-  Code: 200
-  Content:
+Code: 200  
+Content:
 ```json
-    {
-        "count": 1,
-        "posts": [
-            {
-            "author": {
-                "first_name": "John",
-                "last_name": "Doe",
-                "username": "johndoe"
-            },
-            "author_id": 1,
-            "body": "Hello world!",
-            "created": "2020-03-23 11:46:10",
-            "id": 1,
-            "title": "hello"
-            }
-        ]
-    }
+{
+    "count": 1,
+    "posts": [
+        {
+        "author": {
+            "first_name": "John",
+            "last_name": "Doe",
+            "username": "johndoe"
+        },
+        "author_id": 1,
+        "body": "Hello world!",
+        "created": "2020-03-23 11:46:10",
+        "id": 1,
+        "title": "hello"
+        }
+    ]
+}
 ```
 ##### Error response
-  `None`
+`None`
 
 TODO: add delete & edit endpoints
