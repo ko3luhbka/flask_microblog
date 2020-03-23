@@ -1,12 +1,12 @@
 from flask import jsonify, request, url_for
 
-from flaskr.api import bp
+from flaskr.api import api_bp
 from flaskr.api.errors import bad_request
 from flaskr.db import db
 from flaskr.models import User
 
 
-@bp.route('/users/<int:id_>', methods=['GET'])
+@api_bp.route('/users/<int:id_>', methods=['GET'])
 def get_user(id_):
     """
     Get User object with id = `id_`.
@@ -18,8 +18,8 @@ def get_user(id_):
     return jsonify(User.query.get_or_404(id_).to_dict())
 
 
-@bp.route('/users', methods=['GET'])
-def get_users():
+@api_bp.route('/users', methods=['GET'])
+def get_all_users():
     """
     Get all users available in database.
 
@@ -29,7 +29,7 @@ def get_users():
     return jsonify(User.to_collection_dict())
 
 
-@bp.route('/users', methods=['POST'])
+@api_bp.route('/users', methods=['POST'])
 def create_user():
     """
     Create a new user if not exists.
@@ -52,7 +52,7 @@ def create_user():
     return response
 
 
-@bp.route('/users/<int:id_>', methods=['PUT'])
+@api_bp.route('/users/<int:id_>', methods=['PUT'])
 def update_user(id_):
     """
     Update users's attributes.
@@ -63,7 +63,7 @@ def update_user(id_):
     """
     user = User.query.get_or_404(id_)
     user_data = request.get_json() or {}
-    # We should check that new username doesn't collide with existing users
+    # We should check that new username doesn't conflict with existing users
     if user_data.get('username') != user.username and \
         User.query.filter_by(username=user_data['username']).first():
         return bad_request('Please use a different username')

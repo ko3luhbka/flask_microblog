@@ -7,7 +7,7 @@ from flaskr.models import Post, User
 def test_get_user(app, client, user_id):
     with app.app_context():
         user = User.query.get(user_id)
-        response = client.get('/api/users/{0}'.format(user_id))
+        response = client.get('/api/users/{}'.format(user_id))
         if user is not None:
             assert response.status_code == 200
             json_data = response.get_json()
@@ -117,7 +117,7 @@ def test_create_user_bad_fields(app, client, user_data):
     None),
 ))
 def test_update_user(app, client, user_id, user_data, status_code, err_msg):
-    response = client.put('/api/users/{0}'.format(user_id), json=user_data)
+    response = client.put('/api/users/{}'.format(user_id), json=user_data)
     assert response.status_code == status_code
     response_data = response.get_json()
     assert response_data.get('message') == err_msg
@@ -136,7 +136,7 @@ def test_update_user(app, client, user_id, user_data, status_code, err_msg):
 def test_get_post(app, client, post_id):
     with app.app_context():
         post = Post.query.get(post_id)
-        response = client.get('/api/posts/{0}'.format(post_id))
+        response = client.get('/api/posts/{}'.format(post_id))
         if post is not None:
             assert response.status_code == 200
             json_data = response.get_json()

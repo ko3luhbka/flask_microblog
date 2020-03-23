@@ -1,10 +1,10 @@
-from flask import jsonify, request
+from flask import jsonify
 
-from flaskr.api import bp
+from flaskr.api import api_bp
 from flaskr.models import Post
 
 
-@bp.route('/posts/<int:id_>', methods=['GET'])
+@api_bp.route('/posts/<int:id_>', methods=['GET'])
 def get_post(id_):
     """
     Get blog post with id = `id_`.
@@ -16,8 +16,8 @@ def get_post(id_):
     return jsonify(Post.query.get_or_404(id_).to_dict())
 
 
-@bp.route('/posts', methods=['GET'])
-def get_posts():
+@api_bp.route('/posts', methods=['GET'])
+def get_all_posts():
     """
     Get all posts available in database.
 
@@ -25,3 +25,6 @@ def get_posts():
     objects available and `Content-Type: application/json` HTTP header.
     """
     return jsonify(Post.to_collection_dict())
+
+
+# TODO: add delete & edit endpoints

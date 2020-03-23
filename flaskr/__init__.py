@@ -20,7 +20,7 @@ def create_app(test_config=None):
     if test_config is not None:
         app.config.from_mapping(test_config)
 
-    from .db import db, init_db_command
+    from flaskr.db import db, init_db_command
 
     db.init_app(app)
     migrate = Migrate(app, db)
@@ -29,7 +29,7 @@ def create_app(test_config=None):
     from flaskr import blog
     from flaskr import models
     app.register_blueprint(blog.bp)
-    from flaskr.api import bp as api_bp
+    from flaskr.api import api_bp
     app.register_blueprint(api_bp, url_prefix='/api')
     app.add_url_rule('/', endpoint='index')
     app.cli.add_command(init_db_command)
@@ -40,11 +40,11 @@ def create_app(test_config=None):
         file_handler = RotatingFileHandler(
             filename='logs/flaskr.log',
             maxBytes=10240,
-            backupCount=10
+            backupCount=10,
         )
         file_handler.setFormatter(logging.Formatter(
-            '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
-        )
+            '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+        ))
         file_handler.setLevel(logging.DEBUG)
         app.logger.addHandler(file_handler)
 

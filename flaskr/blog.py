@@ -19,7 +19,7 @@ def index():
         Post.body,
         Post.created,
         Post.author_id,
-        User.username
+        User.username,
     ).join(User).\
         filter(Post.author_id == User.id_).\
         order_by(desc(Post.created)).all()
@@ -52,7 +52,7 @@ def create():
 @login_required
 def update(id_):
     """
-    Update `Post` with id = `id_` and once it's done redirect to main page.
+    Update `Post` with id = `id_` and, once it's done, redirect to main page.
 
     :param int id_: a post ID to be deleted, database primary key.
     """
@@ -100,7 +100,7 @@ def get_post(id_, check_author=True):
     """
     post = Post.query.get(id_)
     if post is None:
-        abort(404, "Post id {0} doesn't exist.".format(id_))
+        abort(404, "Post id {} doesn't exist.".format(id_))
     if check_author and post.author_id != g.user.id_:
         abort(403)
     return post

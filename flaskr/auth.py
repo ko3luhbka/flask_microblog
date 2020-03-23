@@ -32,7 +32,7 @@ def register():
         elif not password:
             error = 'Password is required!'
         elif User.query.filter_by(username=username).first() is not None:
-            error = 'User {0} is already registered!'.format(username)
+            error = 'User {} is already registered!'.format(username)
         if error is None:
             user = User(username=username, first_name=first_name, last_name=last_name)
             user.set_password(password)

@@ -16,12 +16,25 @@ class User(db.Model):
     posts = db.relationship('Post', backref='author', lazy=True)
 
     def __repr__(self):
-        return '<User {0}>'.format(self.username)
+        return '<User(username={}, first_name={}, last_name={})>'.format(
+            self.username,
+            self.first_name,
+            self.last_name,
+        )
 
     def set_password(self, password):
+        """Generate password hash and update `password_hash` field.
+
+        :param str password: not hashed user's password.
+        """
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
+        """Check that given password hash matches with one stored in database.
+
+        :param str password: not hashed user's password.
+        :return: True if passwords matches, False otherwise.
+        """
         return check_password_hash(self.password_hash, password)
 
     def to_dict(self):
@@ -76,7 +89,12 @@ class Post(db.Model):
     body = db.Column(db.Text, nullable=False)
 
     def __repr__(self):
-        return '<Post id {0}>'.format(self.id_)
+        return '<Post(id={}, author_id={}, created={}, title={})>'.format(
+            self.id_,
+            self.author_id,
+            self.created,
+            self.title,
+        )
 
     def to_dict(self):
         """
