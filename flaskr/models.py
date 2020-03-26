@@ -1,4 +1,6 @@
-from datetime import datetime
+import base64
+import os
+from datetime import datetime, timedelta
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -13,6 +15,8 @@ class User(db.Model):
     password_hash = db.Column(db.String(120), unique=False, nullable=False)
     first_name = db.Column(db.String(80), unique=False, nullable=False, default='')
     last_name = db.Column(db.String(80), unique=False, nullable=False, default='')
+    api_token = db.Column(db.String(32), unique=True, index=True)
+    api_token_expiration = db.Column(db.DateTime)
     posts = db.relationship('Post', backref='author', lazy=True)
 
     def __repr__(self):
@@ -30,12 +34,46 @@ class User(db.Model):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
-        """Check that given password hash matches with one stored in database.
+        """Check that given password's hash matches with one stored in database.
 
         :param str password: not hashed user's password.
         :return: True if passwords matches, False otherwise.
         """
         return check_password_hash(self.password_hash, password)
+
+    def get_api_token(self, expires_in_sec=3600):
+        """
+        Set user's token if it doesn't exist or expired, and return it.
+
+        :param int expires_in_sec: a period of time in seconds within the
+        token is valid.
+        :return: API token string.
+        """
+        now = datetime.utcnow()
+        if self.api_token and self.api_token_expiration > now + timedelta(seconds=60):
+            return self.api_token
+        self.api_token = base64.b64encode(os.urandom(24)).decode('utf-8')
+        self.api_token_expiration = now + timedelta(seconds=expires_in_sec)
+        db.session.add(self)
+        return self.api_token
+
+    def revoke_api_token(self):
+        """Make the token be expired."""
+        self.api_token_expiration = datetime.utcnow() - timedelta(seconds=1)
+
+    @staticmethod
+    def check_api_token(token):
+        """
+        Check if API token exists or expired.
+        
+        :param str token: REST API token.
+        :return: `User` object the `token` belongs to if such exists
+        and not expired, `None` otherwise.
+        """
+        user = User.query.filter_by(api_token=token).first()
+        if user is None or user.api_token_expiration < datetime.utcnow():
+            return None
+        return user
 
     def to_dict(self):
         """Convert `User` object to dictionary."""

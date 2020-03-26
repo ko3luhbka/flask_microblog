@@ -80,7 +80,7 @@ def logout():
 
 
 def login_required(view):
-    """A decoratior used to check if user is logged in."""
+    """A decoratior for checking if user is logged in."""
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
