@@ -1,3 +1,4 @@
+import base64
 import os
 import tempfile
 from datetime import datetime
@@ -40,10 +41,14 @@ def runner(app):
 
 class AuthActions:
 
+    username = 'test'
+    password = 'test'
+
     def __init__(self, client):
         self._client = client
+        self.auth_header = None
 
-    def login(self, username='test', password='test'):
+    def login(self, username=username, password=password):
         return self._client.post(
             '/auth/login',
             data={'username': username, 'password': password}
@@ -51,6 +56,21 @@ class AuthActions:
 
     def logout(self):
         return self._client.get('/auth/logout')
+
+    def api_login(self, username=username, password=password):
+        credentials = base64.b64encode(
+            bytes('{}:{}'.format(username, password), 'utf-8')
+        )
+        response = self._client.post(
+            '/api/tokens',
+            headers={'Authorization': 'Basic {}'.format(credentials.decode('utf-8'))}
+        )
+        token = response.get_json().get('token')
+        self.auth_header = {'Authorization': 'Bearer {}'.format(token)}
+        return self.auth_header
+
+    def api_logout(self):
+        return self._client.delete('/api/tokens', headers=self.auth_header)
 
 
 @pytest.fixture
@@ -80,5 +100,11 @@ def db_insert_test_data(app):
             title='test title',
             body='test\nbody',
         )
-        db.session.add_all((test_user, other_user, test_post))
+        other_post = Post(
+            author_id=2,
+            created=datetime.fromisoformat('2020-02-01 00:00:00'),
+            title='other title',
+            body='other\nbody',
+        )
+        db.session.add_all((test_user, other_user, test_post, other_post))
         db.session.commit()

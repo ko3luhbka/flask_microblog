@@ -1,13 +1,14 @@
 import pytest
+from flask import g
 
 from flaskr.models import Post, User
 
 
 @pytest.mark.parametrize('user_id', ('1', '666', ''))
-def test_get_user(app, client, user_id):
+def test_get_user(app, client, auth, user_id):
     with app.app_context():
         user = User.query.get(user_id)
-        response = client.get('/api/users/{}'.format(user_id))
+        response = client.get('/api/users/{}'.format(user_id), headers=auth.api_login())
         if user is not None:
             assert response.status_code == 200
             json_data = response.get_json()
@@ -16,10 +17,10 @@ def test_get_user(app, client, user_id):
             assert response.status_code == 404
 
 
-def test_get_users(app, client):
+def test_get_users(app, client, auth):
     with app.app_context():
         users = User.query.all()
-        response = client.get('/api/users')
+        response = client.get('/api/users', headers=auth.api_login())
         assert response.status_code == 200
         json_data = response.get_json()
         assert json_data['users'] == [user.to_dict() for user in users]
@@ -116,8 +117,12 @@ def test_create_user_bad_fields(app, client, user_data):
     200,
     None),
 ))
-def test_update_user(app, client, user_id, user_data, status_code, err_msg):
-    response = client.put('/api/users/{}'.format(user_id), json=user_data)
+def test_update_user(app, client, user_id, auth, user_data, status_code, err_msg):
+    response = client.put(
+        '/api/users/{}'.format(user_id),
+        json=user_data,
+        headers=auth.api_login(),
+    )
     assert response.status_code == status_code
     response_data = response.get_json()
     assert response_data.get('message') == err_msg
@@ -132,24 +137,35 @@ def test_update_user(app, client, user_id, user_data, status_code, err_msg):
             assert getattr(db_user, key) == value
 
 
-@pytest.mark.parametrize('post_id', ('1', '666', ''))
-def test_get_post(app, client, post_id):
+@pytest.mark.parametrize('post_id', ('1', '2', '666', ''))
+def test_get_post(app, client, auth, post_id):
     with app.app_context():
         post = Post.query.get(post_id)
-        response = client.get('/api/posts/{}'.format(post_id))
-        if post is not None:
+        response = client.get('/api/posts/{}'.format(post_id), headers=auth.api_login())
+        if post is None:
+            assert response.status_code == 404
+        elif g.current_user.id_ != post.author.id_:
+            assert response.status_code == 403
+        else:
             assert response.status_code == 200
             json_data = response.get_json()
             assert json_data == post.to_dict()
-        else:
-            assert response.status_code == 404
 
 
-def test_get_posts(app, client):
+@pytest.mark.parametrize(
+    'user, password, expected_status',
+    [('test', 'test', 200), ('bad', 'bad', 401)]
+)
+def test_get_posts(app, client, auth, user, password, expected_status):
     with app.app_context():
         users_posts = Post.query.join(User).filter(Post.author_id == User.id_).all()
-        response = client.get('/api/posts')
-        assert response.status_code == 200
+        response = client.get(
+            '/api/posts',
+            headers=auth.api_login(username=user, password=password)
+        )
+        assert response.status_code == expected_status
+        if expected_status == 401:
+            return
         json_data = response.get_json()
         for db_post in users_posts:
             db_post = db_post.to_dict()

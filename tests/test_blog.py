@@ -60,8 +60,8 @@ def test_author_required(app, client, auth):
 
 @pytest.mark.parametrize(
     'path', (
-    '/2/update',
-    '/2/delete',
+    '/3/update',
+    '/3/delete',
 ))
 def test_exists_required(client, auth, path):
     auth.login()
