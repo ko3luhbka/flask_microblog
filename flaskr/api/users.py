@@ -1,12 +1,14 @@
-from flask import jsonify, request, url_for
+from flask import abort, g, jsonify, request, url_for
 
 from flaskr.api import api_bp
+from flaskr.api.auth import token_auth
 from flaskr.api.errors import bad_request
 from flaskr.db import db
 from flaskr.models import User
 
 
 @api_bp.route('/users/<int:id_>', methods=['GET'])
+@token_auth.login_required
 def get_user(id_):
     """
     Get User object with id = `id_`.
@@ -19,6 +21,7 @@ def get_user(id_):
 
 
 @api_bp.route('/users', methods=['GET'])
+@token_auth.login_required
 def get_all_users():
     """
     Get all users available in database.
@@ -53,6 +56,7 @@ def create_user():
 
 
 @api_bp.route('/users/<int:id_>', methods=['PUT'])
+@token_auth.login_required
 def update_user(id_):
     """
     Update users's attributes.
@@ -60,7 +64,10 @@ def update_user(id_):
     :param int id_: a user ID from the database, actually a primary key.
     :return: Flask `Response` object with added JSON representation of `User` and
     `Content-Type: application/json` HTTP header.
+    If id of `current_user` != passed id, raise 403 
     """
+    if g.current_user.id_ != id_:
+        abort(403)
     user = User.query.get_or_404(id_)
     user_data = request.get_json() or {}
     # We should check that new username doesn't conflict with existing users

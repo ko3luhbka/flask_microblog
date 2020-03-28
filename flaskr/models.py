@@ -45,7 +45,7 @@ class User(db.Model):
         """
         Set user's token if it doesn't exist or expired, and return it.
 
-        :param int expires_in_sec: a period of time in seconds within the
+        :param int expires_in_sec: a period of time in seconds when the
         token is valid.
         :return: API token string.
         """
